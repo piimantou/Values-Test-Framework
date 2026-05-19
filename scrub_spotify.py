@@ -54,7 +54,8 @@ def main():
     parser.add_argument("-o", "--output", default="spotify_scrubbed.csv", help="Output CSV file")
     args = parser.parse_args()
 
-    input_files = args.files or sorted(glob.glob("*.json"))
+    script_dir = Path(__file__).parent
+    input_files = args.files or sorted(script_dir.glob("*.json"))
     if not input_files:
         print("No JSON files found.", file=sys.stderr)
         sys.exit(1)
@@ -64,16 +65,17 @@ def main():
         try:
             entries = load_json_file(path)
             records.extend(extract_record(e) for e in entries)
-            print(f"  {path}: {len(entries)} entries")
+            print(f"  {path.name}: {len(entries)} entries")
         except Exception as e:
             print(f"  WARNING: skipping {path} — {e}", file=sys.stderr)
 
-    with open(args.output, "w", newline="", encoding="utf-8-sig") as f:
+    output_path = script_dir / args.output
+    with open(output_path, "w", newline="", encoding="utf-8-sig") as f:
         writer = csv.DictWriter(f, fieldnames=FIELDS)
         writer.writeheader()
         writer.writerows(records)
 
-    print(f"\nWrote {len(records)} rows to {args.output}")
+    print(f"\nWrote {len(records)} rows to {output_path}")
 
 
 if __name__ == "__main__":
