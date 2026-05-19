@@ -68,7 +68,7 @@ def main():
         except Exception as e:
             print(f"  WARNING: skipping {path} — {e}", file=sys.stderr)
 
-    with open(args.output, "w", newline="", encoding="utf-8") as f:
+    with open(args.output, "w", newline="", encoding="utf-8-sig") as f:
         writer = csv.DictWriter(f, fieldnames=FIELDS)
         writer.writeheader()
         writer.writerows(records)
